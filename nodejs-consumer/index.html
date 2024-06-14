@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
+  </head>
+  <body>
+    Numbers:<br/>
+    <ul>
+      <div class="numbers">
+    </ul>
+    <script>
+      const socket = io();
+      socket.on('mnist-send', (msg) => {
+	  //$('.numbers').prepend($('<li>').html("<li><img src='data:image/bmp;charset=utf-8;base64," + msg['pixels'] + "'/> Image probably contains number <b>" + msg['result'] + "</b>"));
+	  $('.numbers').prepend($('<li>').html("<li>Image probably contains number <b>" + msg['result'] + "</b>"));
+      });
+    </script>
+  </body>
+</html>
