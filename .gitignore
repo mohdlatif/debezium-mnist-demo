@@ -138,3 +138,9 @@ data/
 
 # Idea files
 .idea/
+
+# NodeJS modules
+**/node_modules
+
+# ignore my notes
+notes.txt
