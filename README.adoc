@@ -1,0 +1,38 @@
+= (WIP) Classifying MNIST images from legacy app using Debezium
+
+This README is WIP at the moment.
+I cover all needed instruction to run the demo, but more details and architecture overview will be added as time allows:-)
+
+== Prepare environment
+
+* `mvn clean package -f connect/mnist-smt/pom.xml`
+* `./scripts/mnist2sql.py` - generate SQL files for inserting initial (training) data into Postgres
+* build Qt app, see README there
+* `export DEBEZIUM_VERSION=2.7`
+* `export TENSORFLOW_VERSION=2.16.1`
+* `docker-compose up --build`
+* `psql -U postgres -h 127.0.0.1 postgres`
+** `select count(*) from mnist_train;` - verify train data is there
+** `delete from mnist_test;` - ensure test table is empty
+* `./qt-sender/build/mnist-sender &` - start Qt application
+
+== Train model in Jupyter notebook
+
+* `curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @debezium/register-postgres.json` - start Debezium connector
+* `docker-compose logs tensorflow` - open Jupyter notebook URL from the log
+** upload `jupyter/mnist_kafka.ipynb`
+** run the notebook
+
+== Run classifier in Python and send reqults to NodeJS
+
+* `curl -i -X DELETE http://localhost:8083/connectors/mnist-connector` - delete previous source connector
+* `curl -i -X POST -H "Accept:application/json" -H  "Content-Type:application/json" http://localhost:8083/connectors/ -d @debezium/register-postgres-no-smt.json` - create new one without any SMTs
+* `./clasifier/kafka_classifier.py` - start Python application with classifier
+* `node nodejs-consumer/server.js` - start NodeJS app
+* open `http://localhost:3000/`
+
+== Debugging
+
+* `docker-compose exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --from-beginning --property print.key=true --topic tf.public.mnist_test`
+* `docker-compose exec kafka /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --from-beginning --property print.key=true --topic mnist_result` - check the predictions direcly in the Kafka topic
+
