@@ -10,6 +10,9 @@ MNIST_TRAIN_LABEL_FILE = "train-labels-idx1-ubyte.gz"
 MNIST_TRAIN_IMAGE_FILE = "train-images-idx3-ubyte.gz"
 MNIST_TEST_LABEL_FILE = "t10k-labels-idx1-ubyte.gz"
 MNIST_TEST_IMAGE_FILE = "t10k-images-idx3-ubyte.gz"
+# If the URL doesn't work, use
+# https://web.archive.org/web/20220331130319/https://yann.lecun.com/exdb/mnist/
+# instead.
 MNIST_URL_PREFIX = "http://yann.lecun.com/exdb/mnist/"
 
 MNIST_LABEL_MAGIC = 2049
